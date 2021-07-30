@@ -1,6 +1,7 @@
 package com.satis.productservice.controller;
 
 import com.satis.productservice.Response.MessageResponse;
+import com.satis.productservice.dto.CartDto;
 import com.satis.productservice.dto.ProductDto;
 import com.satis.productservice.dto.StockDto;
 import com.satis.productservice.mapper.ProductMapper;
@@ -45,15 +46,26 @@ public class ProductController {
         return ResponseEntity.ok().body(productDtoList);
     }
 
-    @PostMapping
-    public ResponseEntity<MessageResponse> saveProduct(@RequestBody ProductDto productDto) {
-        Product product = productMapper.convertToProduct(productDto);
-        productService.save(product);
+    @PostMapping("/cart")
+    public ResponseEntity<List<ProductDto>> getAllProductbyIds(@RequestBody CartDto cartDto) {
 
-        MessageResponse response = new MessageResponse(String.format("Product %s created", product.getName()));
+        System.out.println(cartDto.getProductIds());
+        List<Product> products = productService.getAllProductsByIds(cartDto.getProductIds());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        List<ProductDto> productDtoList = productMapper.convertToProductDtoList(products);
+
+        return ResponseEntity.ok().body(productDtoList);
     }
+
+//    @PostMapping
+//    public ResponseEntity<MessageResponse> saveProduct(@RequestBody ProductDto productDto) {
+//        Product product = productMapper.convertToProduct(productDto);
+//        productService.save(product);
+//
+//        MessageResponse response = new MessageResponse(String.format("Product %s created", product.getName()));
+//
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//    }
 
     @PutMapping("/{productId}")
     public ResponseEntity<MessageResponse> updateStock(@PathVariable long productId,
@@ -77,5 +89,7 @@ public class ProductController {
 
         return ResponseEntity.ok().body(response);
     }
+
+
 
 }

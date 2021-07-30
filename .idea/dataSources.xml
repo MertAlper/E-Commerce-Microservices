@@ -16,5 +16,11 @@
       <jdbc-driver>com.dbschema.MongoJdbcDriver</jdbc-driver>
       <jdbc-url>mongodb://64.227.123.97:27017</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="@64.227.123.97 [2]" uuid="eef4a47c-7e26-45b6-89b0-654b5f80c825">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://64.227.123.97:3306</jdbc-url>
+    </data-source>
   </component>
 </project>
