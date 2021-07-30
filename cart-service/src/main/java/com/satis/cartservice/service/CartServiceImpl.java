@@ -1,12 +1,16 @@
 package com.satis.cartservice.service;
 
 import com.satis.cartservice.dao.CartDAO;
+import com.satis.cartservice.dto.CartDto;
+import com.satis.cartservice.dto.CartItemDto;
 import com.satis.cartservice.exception.CartNotFoundException;
 import com.satis.cartservice.exception.UsernameNotFoundException;
 import com.satis.cartservice.model.Cart;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -65,7 +69,15 @@ public class CartServiceImpl implements CartService {
     }
 
     public void sendToQueue(Cart cart) {
-        rabbitTemplate.convertAndSend(exchangeName, routingName, cart);
+         CartDto cartDto = new CartDto();
+         cartDto.setListCartDto(cart.getCartItems().stream().map(item->{
+             CartItemDto cartItemDto = new CartItemDto();
+             cartItemDto.setProductId(item.getProductId());
+             cartItemDto.setQuantity(item.getQuantity());
+             return cartItemDto;
+         }).collect(Collectors.toList())
+         );
+
     }
 
 }

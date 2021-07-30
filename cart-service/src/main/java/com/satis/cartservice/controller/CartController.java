@@ -75,7 +75,7 @@ public class CartController {
     }
 
     @DeleteMapping("/users/{username}")
-    public ResponseEntity<MessageResponse> updateStock(@PathVariable String username) {
+    public ResponseEntity<MessageResponse> deleteCart(@PathVariable String username) {
         Cart cart = cartService.getByUsername(username);
 
         cartService.delete(cart);

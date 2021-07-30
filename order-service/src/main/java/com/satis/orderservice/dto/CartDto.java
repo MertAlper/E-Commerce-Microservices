@@ -1,4 +1,4 @@
-package com.satis.cartservice.dto;
+package com.satis.orderservice.dto;
 
 import lombok.Data;
 
@@ -8,6 +8,9 @@ import java.util.List;
 @Data
 public class CartDto implements Serializable {
 
-    List<CartItemDto> listCartDto;
+
+    private String  username;
+    private List<CartItemDto> cartItems;
+
 
 }

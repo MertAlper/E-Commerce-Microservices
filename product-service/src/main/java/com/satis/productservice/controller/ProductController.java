@@ -17,6 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/products")
+@CrossOrigin
 public class ProductController {
 
     private final ProductService productService;
@@ -46,26 +47,26 @@ public class ProductController {
         return ResponseEntity.ok().body(productDtoList);
     }
 
-    @PostMapping("/cart")
-    public ResponseEntity<List<ProductDto>> getAllProductbyIds(@RequestBody CartDto cartDto) {
-
-        System.out.println(cartDto.getProductIds());
-        List<Product> products = productService.getAllProductsByIds(cartDto.getProductIds());
-
-        List<ProductDto> productDtoList = productMapper.convertToProductDtoList(products);
-
-        return ResponseEntity.ok().body(productDtoList);
-    }
-
-//    @PostMapping
-//    public ResponseEntity<MessageResponse> saveProduct(@RequestBody ProductDto productDto) {
-//        Product product = productMapper.convertToProduct(productDto);
-//        productService.save(product);
+//    @PostMapping("/cart")
+//    public ResponseEntity<List<ProductDto>> getAllProductbyIds(@RequestBody CartDto cartDto) {
 //
-//        MessageResponse response = new MessageResponse(String.format("Product %s created", product.getName()));
+//        System.out.println(cartDto.getProductIds());
+//        List<Product> products = productService.getAllProductsByIds(cartDto.getProductIds());
 //
-//        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+//        List<ProductDto> productDtoList = productMapper.convertToProductDtoList(products);
+//
+//        return ResponseEntity.ok().body(productDtoList);
 //    }
+
+    @PostMapping
+    public ResponseEntity<MessageResponse> saveProduct(@RequestBody ProductDto productDto) {
+        Product product = productMapper.convertToProduct(productDto);
+        productService.save(product);
+
+        MessageResponse response = new MessageResponse(String.format("Product %s created", product.getName()));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
 
     @PutMapping("/{productId}")
     public ResponseEntity<MessageResponse> updateStock(@PathVariable long productId,
@@ -73,6 +74,8 @@ public class ProductController {
         Product productInDb = productService.getById(productId);
         Stock stock = productInDb.getStock();
         stock.setQuantity(stock.getQuantity() - stockDto.getQuantity());
+
+        productInDb.setStock(stock);
 
         productService.update(productInDb);
 

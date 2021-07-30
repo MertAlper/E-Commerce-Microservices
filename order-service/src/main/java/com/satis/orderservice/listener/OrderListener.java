@@ -2,7 +2,7 @@ package com.satis.orderservice.listener;
 
 import com.satis.orderservice.FeignClient.CustomerClient;
 import com.satis.orderservice.FeignClient.ProductClient;
-import com.satis.orderservice.dto.Cart;
+import com.satis.orderservice.dto.CartDto;
 import com.satis.orderservice.model.Order;
 import com.satis.orderservice.model.Product;
 import com.satis.orderservice.model.User;
@@ -30,14 +30,23 @@ public class OrderListener {
     }
 
     @RabbitListener(queues = "order-queue")
-    public void saveOrder(Cart cart) {
-        System.out.println(cart);
+    public void saveOrder(CartDto cart) {
+
         User user = customerClient.getCustomerByUsername(cart.getUsername());
         List<Product> products = new ArrayList<Product>();
-//        Order order = new Order();
-//        // TODO Order'ı doldur.
-//
-//        orderService.save(order);
+
+        cart.getCartItems().forEach(cartItem -> {
+            Product product= productClient.getProductById(cartItem.getProductId());
+            products.add(product);
+        });
+
+        Order order = new Order();
+
+        order.setUser(user);
+        order.setProducts(products);
+
+        orderService.save(order);
+
     }
 
 }

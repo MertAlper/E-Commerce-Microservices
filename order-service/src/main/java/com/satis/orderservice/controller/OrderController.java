@@ -1,26 +1,50 @@
 package com.satis.orderservice.controller;
 
 import com.satis.orderservice.FeignClient.CustomerClient;
+import com.satis.orderservice.model.Order;
 import com.satis.orderservice.model.User;
+import com.satis.orderservice.response.MessageResponse;
+import com.satis.orderservice.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/order")
 public class OrderController {
 
     @Autowired
-    CustomerClient customerClient;
+    OrderService orderService;
 
     @GetMapping("/{username}")
-    public ResponseEntity<User> getCustomerById(@PathVariable String username) {
+    public ResponseEntity<Order> getOrderById(@PathVariable String username) {
 
-        User user =customerClient.getCustomerByUsername(username);
+        Order order= orderService.getByUsername(username);
 
-        return ResponseEntity.ok().body(user);
+        return ResponseEntity.ok().body(order);
     }
+
+    @GetMapping
+    public ResponseEntity<List<Order>> getOrders() {
+
+        List<Order> orders= orderService.getAll();
+
+        return ResponseEntity.ok().body(orders);
+    }
+
+    @PostMapping
+    public ResponseEntity<MessageResponse> saveOrder(@RequestBody Order order) {
+
+        orderService.save(order);
+
+        MessageResponse response = new MessageResponse("Order is Created");
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+
+
 }
